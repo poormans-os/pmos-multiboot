@@ -2,29 +2,34 @@ CUSTOM_GCC=/mnt/d/coding/os/barebones/utils/opt/cross
 
 .PHONY: all clean run
 
-buildObj = $(CC) -c src/$(1)/$(1).c -o build/$(1).o $(CFLAGS)
+buildObj = @echo "\033[36m[Compiling]\033[0m $(1).o" && $(CC) -c src/$(1)/$(1).c -o build/$(1).o $(CFLAGS)
 
 CC			= $(CUSTOM_GCC)/bin/i686-elf-gcc
 AS			= $(CUSTOM_GCC)/bin/i686-elf-as
 CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=gnu99
 LDFLAGS		= -ffreestanding -O2 -nostdlib -lgcc
 OBJFILES 	= build/stdio.o build/string.o build/tty.o build/kernel.o build/boot.o
-TARGET		= bin/myos.bin
+TARGET		= bin/P-MOS.bin
 
 all: $(TARGET)
 
-$(TARGET): build/ $(OBJFILES)
-	mkdir -p bin
-	$(CC) -T static/linker.ld $(OBJFILES) $(LDFLAGS) -o $(TARGET)
+$(TARGET): build/ bin/ $(OBJFILES)
+	@echo "\033[32m[Linking]\033[0m The Project"
+	@$(CC) -T static/linker.ld $(OBJFILES) $(LDFLAGS) -o $(TARGET)
+
+bin/:
+	@mkdir -p bin
 
 build/:
-	mkdir -p build
+	@mkdir -p build
 
 build/boot.o: src/boot.s
-	$(AS) src/boot.s -o build/boot.o
+	@echo "\033[34m[Assembling]\033[0m boot.o"
+	@$(AS) src/boot.s --no-warn -o build/boot.o
 
 build/kernel.o: src/kernel.c
-	$(CC) -c src/kernel.c -o build/kernel.o $(CFLAGS)
+	@echo "\033[36m[Compiling]\033[0m kernel.o"
+	@$(CC) -c src/kernel.c -o build/kernel.o $(CFLAGS)
 
 build/stdio.o: src/stdio/*.c
 	$(call buildObj,stdio)
@@ -36,8 +41,10 @@ build/tty.o: src/tty/*.c
 	$(call buildObj,tty)
 
 clean:
-	rm -rf build
-	rm -rf bin
+	@echo "\033[33m[Cleaning up!]\033[0m"
+	@rm -rf build
+	@rm -rf bin
 
 run: $(TARGET)
-	qemu-system-i386 -kernel $(TARGET)
+	@echo "\033[36m[Runing on qemu]\033[0m"
+	@qemu-system-i386 -kernel $(TARGET)
