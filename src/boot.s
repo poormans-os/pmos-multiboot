@@ -1,3 +1,5 @@
+.intel_syntax noprefix
+
 /* Declare constants for the multiboot header. */
 .set ALIGN,    1<<0             /* align loaded modules on page boundaries */
 .set MEMINFO,  1<<1             /* provide memory map */
@@ -43,6 +45,7 @@ doesn't make sense to return from this function as the bootloader is gone.
 */
 .section .text
 .global _start
+.global kernel_main
 .type _start, @function
 _start:
 	/*
@@ -63,7 +66,7 @@ _start:
 	stack (as it grows downwards on x86 systems). This is necessarily done
 	in assembly as languages such as C cannot function without a stack.
 	*/
-	mov $stack_top, %esp
+	mov stack_top, esp
  
 	/*
 	This is a good place to initialize crucial processor state before the
@@ -75,7 +78,43 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
+	jmp load_gdt
  
+	/*global descriptor table*/
+	gdt:
+	
+	gdt_null:
+		.quad 0
+	
+	gdt_code:
+		.word 0xFFFF
+		.word 0
+		
+		.byte 0
+		.byte 10011010
+		.byte 11001111
+		.byte 0
+	
+	gdt_data:
+		.word 0xFFFF
+		.word 0
+		
+		.byte 0
+		.byte 10010010
+		.byte 11001111
+		.byte 0
+	
+	gdt_end:
+	
+	gdt_desc:
+		.word gdt_end - gdt - 1
+		.int gdt /*FIXME - Should be a Double Word*/
+	
+	/*;load gdt*/
+	load_gdt:
+		cli  /*;disable interrupts*/
+		lgdt [gdt_desc]  /*;load GDT*/
+		sti  /*;enable interrupts*/
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes
@@ -99,8 +138,8 @@ _start:
 	   non-maskable interrupt occurring or due to system management mode.
 	*/
 	cli
-1:	hlt
-	jmp 1b
+.hlt:	hlt
+	jmp .hlt
  
 /*
 Set the size of the _start symbol to the current location '.' minus its start.
