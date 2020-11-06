@@ -2,3 +2,4 @@ build/
 bin/
 .vscode/
 utils/
+GCC_PATH

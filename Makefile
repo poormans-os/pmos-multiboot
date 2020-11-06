@@ -1,4 +1,4 @@
-CUSTOM_GCC=/mnt/d/coding/os/barebones/utils/opt/cross
+include GCC_PATH
 
 .PHONY: all clean run
 
