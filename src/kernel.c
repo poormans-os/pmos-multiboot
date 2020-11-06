@@ -1,5 +1,7 @@
 #include "stdio/stdio.h"
 #include "tty/tty.h"
+#include "io/io.h"
+#include "interrupts/idt.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -13,11 +15,13 @@
 
 void kernel_main(void)
 {
-	char c = 'c';
-
 	/* Initialize terminal interface */
 	terminal_initialize();
+	idt_init();
 
-	printf("%s\n", "Hello, kernel World!");
-	putchar(c);
+	/*
+	We have a problem with calling an interrupt, although we think the IDT should work
+	*/
+
+	printf("%s\n", "Hello, From P-MOS!");
 }

@@ -8,7 +8,7 @@ CC			= $(CUSTOM_GCC)/bin/i686-elf-gcc
 AS			= $(CUSTOM_GCC)/bin/i686-elf-as
 CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=gnu99
 LDFLAGS		= -ffreestanding -O2 -nostdlib -lgcc
-OBJFILES 	= build/stdio.o build/string.o build/tty.o build/kernel.o build/boot.o
+OBJFILES 	= build/stdio.o build/string.o build/tty.o build/kernel.o build/boot.o build/io.o build/idt.o build/interrupts.o
 TARGET		= bin/P-MOS.bin
 
 all: $(TARGET)
@@ -22,6 +22,18 @@ bin/:
 
 build/:
 	@mkdir -p build
+
+# FIXME - Renaming
+build/interrupts.o:
+	$(AS) src/interrupts/interrupts.s -o build/interrupts.o
+
+# FIXME - Renaming
+build/idt.o: src/interrupts/*.c
+	$(CC) -c src/interrupts/interrupts.c -o build/idt.o $(CFLAGS)
+
+build/io.o: src/io/*
+	@echo "\033[34m[Assembling]\033[0m io.o"
+	@$(AS) src/io/io.s -o build/io.o
 
 build/boot.o: src/boot.s
 	@echo "\033[34m[Assembling]\033[0m boot.o"
