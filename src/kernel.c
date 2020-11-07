@@ -19,9 +19,8 @@ void kernel_main(void)
 	terminal_initialize();
 	idt_init();
 
-	/*
-	We have a problem with calling an interrupt, although we think the IDT should work
-	*/
-
 	printf("%s\n", "Hello, From P-MOS!");
+	while (1)
+	{
+	}
 }

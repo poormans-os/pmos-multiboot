@@ -91,8 +91,8 @@ _start:
 		.word 0
 		
 		.byte 0
-		.byte 10011010
-		.byte 11001111
+		.byte 0x9a /*10011010b*/
+		.byte 0xCF /*11001111b*/
 		.byte 0
 	
 	gdt_data:
@@ -100,8 +100,8 @@ _start:
 		.word 0
 		
 		.byte 0
-		.byte 10010010
-		.byte 11001111
+		.byte 0x92 /*10010010b*/
+		.byte 0xCF /*11001111b*/
 		.byte 0
 	
 	gdt_end:
