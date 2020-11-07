@@ -1,6 +1,18 @@
 #include "../stdio/stdio.h"
 #include "../io/io.h"
 
+typedef struct
+{
+    unsigned char scrollLock : 1;
+    unsigned char numberLock : 1;
+    unsigned char capsLock   : 1;
+    unsigned char scanSet    : 2;
+    unsigned char lastCmd       ;
+    unsigned char lastData      ;
+} _keyboardState;
+static _keyboardState keyboardState;
+
+
 static const char scanset1[0xFF] = {        /*pressed*/
                                 /*0-7*/      0 /*null*/      , 0 /*esc*/        , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , 
                                 /*8-15*/    '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  0 /*backspace*/ ,  0 /*tab*/       ,
@@ -73,14 +85,44 @@ static const char scanset2[0xFF] = {
 
 void irq0_handler()
 {
-    //printf("int0!\n");
     outb(0x20, 0x20);
 }
 
 void irq1_handler()
 {
-    putchar(scanset1[inb(0x60)]);
-    //printf("%c", scanset1[inb(0x60)]);
-    //printf("int1! %d\n", inb(0x60));
+    unsigned char code = inb(0x60);
+    int temp = code;
+    if (code == 0xFA) // OK
+    {
+        keyboardState.lastCmd = 0;
+        keyboardState.lastData = 0;
+        outb(0x20, 0x20);
+        return;
+    }
+    else if (code == 0xFE) //Resend
+    {
+        outb(0x60, keyboardState.lastData);
+        outb(0x20, 0x20);
+        return;
+    }
+    
+    if (code > 0x80)
+    {
+        temp += 128;
+        printf("%d %d - %d ", keyboardState.capsLock, scanset1[code], temp);
+        if (keyboardState.capsLock == 0 && ((temp >= 0x10 && temp <= 0x19) || (temp >= 0x1E && temp <= 0x26) || (temp >= 0x2C && temp <=0x32)))
+        {
+            printf("Seccess ");
+            putchar(scanset1[code] + 0x20);
+            
+        }
+        else
+        {
+            printf("else ");
+            putchar(scanset1[code]);
+        }
+        putchar('\n');
+    }
+    
     outb(0x20, 0x20);
 }

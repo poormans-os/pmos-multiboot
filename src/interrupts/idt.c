@@ -1,15 +1,18 @@
 #include "idt.h"
 
-struct IDT_entry
+typedef struct
 {
     unsigned short int offset_lowerbits;
     unsigned short int selector;
     unsigned char zero;
     unsigned char type_attr;
     unsigned short int offset_higherbits;
-};
+} IDT_entry;
 
-struct IDT_entry IDT[256];
+IDT_entry IDT[256];
+
+struct _keyboardState;
+extern _keyboardState keyboardState;
 
 void idt_init(void)
 {
@@ -34,9 +37,6 @@ void idt_init(void)
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
 
-    /*Setting the keyboard to Scan Set 1*/
-    //outb(0x60, 0xF1);
-
     irq0_address = (unsigned long)irq0;
     IDT[32].offset_lowerbits = irq0_address & 0xffff;
     IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
@@ -53,9 +53,22 @@ void idt_init(void)
 
     /* fill the IDT descriptor */
     idt_address = (unsigned long)IDT;
-    idt_ptr[0] = (sizeof(struct IDT_entry) * 256) + ((idt_address & 0xffff) << 16);
+    idt_ptr[0] = (sizeof(IDT_entry) * 256) + ((idt_address & 0xffff) << 16);
     idt_ptr[1] = idt_address >> 16;
 
     load_idt(idt_ptr);
-    outb(0x60, 0xF1);
+
+    // Keyboard init
+    keyboardState.scanSet = 1;
+    keyboardState.lastCmd = 0xF0;
+    keyboardState.lastData = keyboardState.scanSet;
+    outb(0x60, 0xF0);
+    outb(0x60, keyboardState.scanSet);
+
+    keyboardState.scrollLock = 0;
+    keyboardState.numberLock = 1;
+    keyboardState.capsLock = 0;
+
+    outb(0x60, 0xED);
+    outb(0x60, (keyboardState.capsLock << 2 & keyboardState.numberLock << 1 & keyboardState.scrollLock));
 }
