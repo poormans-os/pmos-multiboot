@@ -2,14 +2,17 @@ include GCC_PATH
 
 .PHONY: all clean run
 
-buildObj = @echo "\033[36m[Compiling]\033[0m $(1).o" && $(CC) -c src/$(1)/$(1).c -o build/$(1).o $(CFLAGS)
+buildObj 	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
+asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) src/$(1)/$(1).s -o build/$(1).o
 
 CC			= $(CUSTOM_GCC)/bin/i686-elf-gcc
 AS			= $(CUSTOM_GCC)/bin/i686-elf-as
 CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=gnu99
 LDFLAGS		= -ffreestanding -O2 -nostdlib -lgcc
-OBJFILES 	= build/stdio.o build/string.o build/tty.o build/kernel.o build/boot.o build/io.o build/idt.o build/interrupts.o
-TARGET		= bin/P-MOS.bin
+OBJS 		+= stdio stdlib string tty kernel idt #Compiler objects
+OBJS	 	+= boot io interrupts #Assembler objects
+OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
+TARGET		= bin/pmos.bin
 
 all: $(TARGET)
 
@@ -23,28 +26,30 @@ bin/:
 build/:
 	@mkdir -p build
 
-# FIXME - Renaming
-build/interrupts.o:
-	$(AS) src/interrupts/interrupts.s -o build/interrupts.o
-
-# FIXME - Renaming
-build/idt.o: src/interrupts/*.c
-	$(CC) -c src/interrupts/interrupts.c -o build/idt.o $(CFLAGS)
-
-build/io.o: src/io/*
-	@echo "\033[34m[Assembling]\033[0m io.o"
-	@$(AS) src/io/io.s -o build/io.o
-
-build/boot.o: src/boot.s
-	@echo "\033[34m[Assembling]\033[0m boot.o"
-	@$(AS) src/boot.s --no-warn -o build/boot.o
-
 build/kernel.o: src/kernel.c
 	@echo "\033[36m[Compiling]\033[0m kernel.o"
 	@$(CC) -c src/kernel.c -o build/kernel.o $(CFLAGS)
 
+build/boot.o: src/boot.s
+	@echo "\033[34m[Assembling]\033[0m boot.o"
+	@$(AS) src/boot.s -o build/boot.o
+
+# FIXME - Renaming
+build/interrupts.o: src/interrupts/*.s
+	$(call asmObj,interrupts)
+
+# FIXME - Renaming
+build/idt.o: src/interrupts/*.c
+	$(call buildObj,interrupts,idt)
+
+build/io.o: src/io/*.s
+	$(call asmObj,io)
+
 build/stdio.o: src/stdio/*.c
 	$(call buildObj,stdio)
+
+build/stdlib.o: src/stdlib/*.c
+	$(call buildObj,stdlib)
 
 build/string.o: src/string/*.c
 	$(call buildObj,string)
