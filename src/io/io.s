@@ -7,11 +7,11 @@
 
 inb:
 	mov edx, [esp + 4]
-	in al, dx	
+	in al, dx
 	ret
 
 outb:
-	mov   edx, [esp + 4]    
-	mov   al, [esp + 4 + 4]  
-	out   dx, al  
+	mov   edx, [esp + 4]
+	mov   al, [esp + 4 + 4]
+	out   dx, al
 	ret

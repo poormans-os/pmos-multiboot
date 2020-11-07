@@ -13,7 +13,7 @@ typedef struct
 static _keyboardState keyboardState;
 
 
-static const char scanset1[0xFF] = {        /*pressed*/
+static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*0-7*/      0 /*null*/      , 0 /*esc*/        , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , 
                                 /*8-15*/    '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  0 /*backspace*/ ,  0 /*tab*/       ,
                                 /*16-23*/   'Q'              , 'W'              , 'E'              , 'R'              , 'T'              , 'Y'              , 'U'              , 'I'              , 
@@ -48,7 +48,7 @@ static const char scanset1[0xFF] = {        /*pressed*/
                                 /*248-255*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/            
 };
 
-static const char scanset2[0xFF] = {
+static const unsigned char scanset2[0xFF] = {
     /*0-7*/     0 /*null*/    ,  0  /*F9*/     ,  0   /*null*/   ,  0  /*F5*/  ,  0  /*F3*/    ,  0   /*F1*/  ,  0  /*F2*/       , 0 /*F12*/ ,
     /*8-15*/    0 /*null*/    ,  0  /*F10*/    ,  0   /*F8*/     ,  0  /*F6*/  ,  0  /*F4*/    , '\t' /*tab*/ , '`' /*`*/        , 0 /*null*/,
     /*16-23*/   0 /*null*/    ,  0  /*l-alt*/  ,  0   /*l-shift*/,  0  /*null*/,  0  /*l-ctrl*/, 'Q'  /*Q*/   , '1' /*1*/        , 0 /*null*/,
@@ -90,38 +90,24 @@ void irq0_handler()
 
 void irq1_handler()
 {
-    unsigned char code = inb(0x60);
-    int temp = code;
+    unsigned int code = inb(0x60);
+    
     if (code == 0xFA) // OK
     {
         keyboardState.lastCmd = 0;
         keyboardState.lastData = 0;
-        outb(0x20, 0x20);
-        return;
     }
     else if (code == 0xFE) //Resend
-    {
         outb(0x60, keyboardState.lastData);
-        outb(0x20, 0x20);
-        return;
-    }
-    
-    if (code > 0x80)
+    else if (code == 0xBA) // CapsLock Pressed
+        keyboardState.capsLock = !keyboardState.capsLock;
+    else if (code > 0x80)
     {
-        temp += 128;
-        printf("%d %d - %d ", keyboardState.capsLock, scanset1[code], temp);
-        if (keyboardState.capsLock == 0 && ((temp >= 0x10 && temp <= 0x19) || (temp >= 0x1E && temp <= 0x26) || (temp >= 0x2C && temp <=0x32)))
-        {
-            printf("Seccess ");
-            putchar(scanset1[code] + 0x20);
-            
-        }
+        code = scanset1[code];
+        if (keyboardState.capsLock == 0 && (code >= 0x41 && code <= 0x5A))
+            putchar(code + 0x20);
         else
-        {
-            printf("else ");
-            putchar(scanset1[code]);
-        }
-        putchar('\n');
+            putchar(code);
     }
     
     outb(0x20, 0x20);
