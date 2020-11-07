@@ -3,6 +3,7 @@
 #include "../vga.h"
 #include "../string/string.h"
 #include "../tty/tty.h"
+#include "../stdlib/stdlib.h"
 
 #include <limits.h>
 #include <stddef.h>

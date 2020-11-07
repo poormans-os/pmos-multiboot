@@ -54,6 +54,22 @@ int printf(const char *restrict format, ...)
                 return -1;
             written++;
         }
+        if (*format == 'd')
+        {
+            //FIXME - implement in a better way
+            format++;
+            int d = (char)va_arg(parameters, int /* char promotes to int */);
+            char tmp[32] = {0};
+            if (!maxrem)
+            {
+                // TODO: Set errno to EOVERFLOW.
+                return -1;
+            }
+            itoa(d, tmp, 10);
+            if (!print(tmp, strlen(tmp)))
+                return -1;
+            written++;
+        }
         else if (*format == 's')
         {
             format++;
