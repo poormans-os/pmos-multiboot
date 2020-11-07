@@ -34,6 +34,9 @@ void idt_init(void)
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
 
+    /*Setting the keyboard to Scan Set 1*/
+    //outb(0x60, 0xF1);
+
     irq0_address = (unsigned long)irq0;
     IDT[32].offset_lowerbits = irq0_address & 0xffff;
     IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
@@ -54,4 +57,5 @@ void idt_init(void)
     idt_ptr[1] = idt_address >> 16;
 
     load_idt(idt_ptr);
+    outb(0x60, 0xF1);
 }

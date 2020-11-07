@@ -1,8 +1,8 @@
 #include "../stdio/stdio.h"
 #include "../io/io.h"
 
-static const scanset1[0xFF] = {                                /*pressed*/
-                                /*0-7*/      0 /*esc*/       , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , '7'              , 
+static const char scanset1[0xFF] = {                                /*pressed*/
+                                /*0-7*/      0,0 /*esc*/       , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , '7'              , 
                                 /*8-15*/    '8'              , '9'              , '0'              , '-'              , '='              ,  0 /*backspace*/ ,  0 /*tab*/       , 'Q'              ,
                                 /*16-23*/   'W'              , 'E'              , 'R'              , 'T'              , 'Y'              , 'U'              , 'I'              , 'O'              ,
                                 /*24-31*/   'P'              , '['              , ']'              ,  0 /*enter*/     ,  0 /*L ctrl*/    , 'A'              , 'S'              , 'D'              ,   
@@ -34,7 +34,7 @@ static const scanset1[0xFF] = {                                /*pressed*/
                                 /*224-231*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
                                 /*232-239*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
                                 /*240-247*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
-                                /*248-255*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      
+                                /*248-255*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,   /*null*/      
 };
 
 static const char scanset2[0xFF] = {
@@ -80,7 +80,8 @@ void irq0_handler()
 
 void irq1_handler()
 {
-    inb(0x60);
+    putchar(scanset1[inb(0x60)]);
+    //printf("%c", scanset1[inb(0x60)]);
     //printf("int1! %d\n", inb(0x60));
     outb(0x20, 0x20);
 }
