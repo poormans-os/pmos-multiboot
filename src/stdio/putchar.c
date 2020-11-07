@@ -2,8 +2,7 @@
 
 int putchar(int ic)
 {
-    char c = (char)ic;
-    terminal_write(&c, sizeof(c));
+    terminal_putchar((char)ic);
     // TODO: Implement stdio and the write system call.
     return ic;
 }

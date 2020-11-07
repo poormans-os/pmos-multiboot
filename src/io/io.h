@@ -1,4 +1,4 @@
 #pragma once
 
-extern void outb(unsigned char port, unsigned char value);
-extern unsigned char inb(unsigned char port);
+extern void outb(unsigned int port, unsigned int value);
+extern unsigned int inb(unsigned int port);
