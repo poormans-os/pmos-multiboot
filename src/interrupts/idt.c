@@ -15,8 +15,10 @@ void idt_init(void)
 {
     extern int load_idt();
     extern int irq0();
+    extern int irq1();
 
     unsigned long irq0_address;
+    unsigned long irq1_address;
     unsigned long idt_address;
     unsigned long idt_ptr[2];
 
@@ -38,6 +40,13 @@ void idt_init(void)
     IDT[32].zero = 0;
     IDT[32].type_attr = 0x8e; /* INTERRUPT_GATE */
     IDT[32].offset_higherbits = (irq0_address & 0xffff0000) >> 16;
+
+    irq1_address = (unsigned long)irq1;
+    IDT[33].offset_lowerbits = irq1_address & 0xffff;
+    IDT[33].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+    IDT[33].zero = 0;
+    IDT[33].type_attr = 0x8e; /* INTERRUPT_GATE */
+    IDT[33].offset_higherbits = (irq1_address & 0xffff0000) >> 16;
 
     /* fill the IDT descriptor */
     idt_address = (unsigned long)IDT;
