@@ -1,6 +1,6 @@
 #include "math.h"
 
-int abs(int a)
+int abs(float a)
 {
     return a < 0 ? -a : a;
 }

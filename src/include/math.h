@@ -1,3 +1,4 @@
 #pragma once
 
-int abs(int);
+int abs(float);
+float floor(float);
