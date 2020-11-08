@@ -1,7 +1,6 @@
-#include "stdio/stdio.h"
-#include "tty/tty.h"
-#include "io/io.h"
-#include "interrupts/idt.h"
+#include "stdio.h"
+#include "tty.h"
+#include "idt.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)

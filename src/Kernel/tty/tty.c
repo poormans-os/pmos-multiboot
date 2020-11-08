@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../string/string.h"
+#include "string.h"
 #include "../vga.h"
 #include "tty.h"
 

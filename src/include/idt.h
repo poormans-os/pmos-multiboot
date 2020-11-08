@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../io/io.h"
+#include "io.h"
 
 void idt_init(void);

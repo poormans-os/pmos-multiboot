@@ -1,5 +1,5 @@
-#include "../stdio/stdio.h"
-#include "../io/io.h"
+#include "stdio.h"
+#include "io.h"
 
 typedef struct
 {
