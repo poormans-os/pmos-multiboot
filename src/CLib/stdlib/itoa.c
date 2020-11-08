@@ -1,11 +1,5 @@
 #include "stdlib.h"
 
-//FIXME - ABS > math.h
-int abs(int a)
-{
-    return a < 0 ? -a : a;
-}
-
 // inline function to swap two numbers
 inline void swap(char *x, char *y)
 {
