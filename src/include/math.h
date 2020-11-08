@@ -1,3 +1,5 @@
 #pragma once
 
-int abs(int);
+float fabs(float);
+float pow(float, float);
+float sqrt(float);
