@@ -1,5 +1,6 @@
 #include "idt.h"
 
+//Each interrupt has this fields
 typedef struct
 {
     unsigned short int offset_lowerbits;
@@ -9,10 +10,11 @@ typedef struct
     unsigned short int offset_higherbits;
 } IDT_entry;
 
-IDT_entry IDT[256];
+IDT_entry IDT[256]; //All the interputs are stored in is table
 
-extern _keyboardState keyboardState;
+extern _keyboardState keyboardState; //The keyboard state, defined at "irq.c"
 
+//initializing the IDT
 void idt_init(void)
 {
     extern int load_idt();

@@ -1,5 +1,6 @@
 #include "stdio.h"
 
+//Warper function, calls terminal_putchat
 int putchar(int ic)
 {
     terminal_putchar((char)ic);

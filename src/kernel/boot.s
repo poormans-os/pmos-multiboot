@@ -1,3 +1,6 @@
+/*The first code that runs at startup.
+Loading the GDT and calling the kernel_main function,
+then entering an infinite loop*/
 .intel_syntax noprefix
 
 /* Declare constants for the multiboot header. */

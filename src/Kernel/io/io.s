@@ -1,5 +1,4 @@
-/*TODO - Linker*/
-
+/*Wrapper for the inb and outb functions*/
 .intel_syntax noprefix
 
 .global inb
