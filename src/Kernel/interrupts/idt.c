@@ -11,7 +11,6 @@ typedef struct
 
 IDT_entry IDT[256];
 
-struct _keyboardState;
 extern _keyboardState keyboardState;
 
 void idt_init(void)
