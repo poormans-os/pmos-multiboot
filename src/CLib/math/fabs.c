@@ -1,6 +1,6 @@
 #include "math.h"
 
-float abs(float a)
+float fabs(float a)
 {
     return a < 0 ? -a : a;
 }
