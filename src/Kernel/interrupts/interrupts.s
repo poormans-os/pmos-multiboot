@@ -1,3 +1,4 @@
+/*A simple wrapper-file for the interrupts*/
 .intel_syntax noprefix
 
 .global load_idt

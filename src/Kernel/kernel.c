@@ -1,3 +1,4 @@
+/*The 'main' function, should initialize the terminal and the IDT*/
 #include "stdio.h"
 #include "tty.h"
 #include "idt.h"
