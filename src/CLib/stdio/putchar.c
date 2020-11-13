@@ -1,11 +1,11 @@
 #include "stdio.h"
 
 //Warper function, calls terminal_putchat
-int putchar(int ic)
+int putchar(char ic)
 {
     if (!ic)
         return 0;
-    terminal_putchar((char)ic);
+    terminal_putchar(ic);
     // TODO: Implement stdio and the write system call.
     return ic;
 }

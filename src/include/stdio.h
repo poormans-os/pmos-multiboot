@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 int printf(const char *__restrict, ...);
-int putchar(int);
+int putchar(char);
 int puts(const char *);
 
 #ifdef __cplusplus
