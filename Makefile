@@ -8,10 +8,10 @@ asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) src/kernel/$(1)/$
 
 CC			= $(CUSTOM_GCC)/bin/i686-elf-gcc
 AS			= $(CUSTOM_GCC)/bin/i686-elf-as
-CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=gnu99 -Isrc/include
+CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=c18 -Isrc/include
 LDFLAGS		= -ffreestanding -O2 -nostdlib -lgcc
-OBJS 		+= stdio stdlib string tty kernel idt math #Compiler objects
-OBJS	 	+= boot io interrupts #Assembler objects
+OBJS 		+= stdio stdlib string tty kernel idt math io #Compiler objects
+OBJS	 	+= boot interrupts #Assembler objects
 OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
 TARGET		= bin/pmos.bin
 
@@ -43,8 +43,8 @@ build/interrupts.o: src/Kernel/interrupts/*.s
 build/idt.o: src/Kernel/interrupts/*.c
 	$(call buildObj,interrupts,idt)
 
-build/io.o: src/Kernel/io/*.s
-	$(call asmObj,io)
+build/io.o: src/Kernel/io/*.c
+	$(call buildObj,io)
 
 build/tty.o: src/Kernel/tty/*.c
 	$(call buildObj,tty)

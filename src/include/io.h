@@ -1,5 +1,7 @@
 //Allows the user to access the inb and outb function that are written in asm
 #pragma once
 
-extern void outb(unsigned int port, unsigned int value);
-extern unsigned int inb(unsigned int port);
+#include <stdint.h>
+
+void outb(uint16_t port, uint8_t value);
+uint8_t inb(uint16_t port);
