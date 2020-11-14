@@ -8,8 +8,9 @@ static bool print(const char *data, size_t length)
 {
     const unsigned char *bytes = (const unsigned char *)data; //assign string into bytes array of Ascii values
     for (size_t i = 0; i < length; i++)                       //print each byte with putchar function
-        if (putchar(bytes[i]) == EOF)
-            return false;
+        putchar(bytes[i]);
+    //     if (putchar(bytes[i]) == EOF)
+    //         return false;
     return true;
 }
 
