@@ -1,15 +1,17 @@
-include GCC_PATH
-
 .PHONY: all clean run
 
 buildObj 	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/Kernel/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
 buildLibObj	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/CLib/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
-asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) src/kernel/$(1)/$(1).s -o build/$(1).o
+asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) $(ASFLAGS) $(ARCH_FLAGS) -o build/$(1).o src/kernel/$(1)/$(1).s
 
-CC			= $(CUSTOM_GCC)/bin/i686-elf-gcc
-AS			= $(CUSTOM_GCC)/bin/i686-elf-as
-CFLAGS		= -ffreestanding -O2 -Wall -Wextra -std=c18 -Isrc/include
-LDFLAGS		= -ffreestanding -O2 -nostdlib -lgcc
+ARCH=i386
+ARCH_FLAGS=-march=$(ARCH)
+
+CC  		= clang-9
+AS  		= as
+CFLAGS		= $(ARCH_FLAGS) -m32 -W -Wall -O0 -std=c18 -fomit-frame-pointer -nodefaultlibs -nostdlib -finline-functions -fno-builtin -Isrc/include/
+ASFLAGS		= --32
+LDFLAGS		= -m elf_$(ARCH)
 OBJS 		+= stdio stdlib string tty kernel idt math io #Compiler objects
 OBJS	 	+= boot interrupts #Assembler objects
 OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
@@ -17,9 +19,11 @@ TARGET		= bin/pmos.bin
 
 all: $(TARGET)
 
+remake: clean $(TARGET)
+
 $(TARGET): build/ bin/ $(OBJFILES)
 	@echo "\033[32m[Linking]\033[0m The Project"
-	@$(CC) -T src/Kernel/static/linker.ld $(OBJFILES) $(LDFLAGS) -o $(TARGET)
+	@ld $(LDFLAGS) -T src/Kernel/static/linker.ld $(OBJFILES) -o $(TARGET)
 
 bin/:
 	@mkdir -p bin
@@ -33,7 +37,7 @@ build/kernel.o: src/Kernel/kernel.c
 
 build/boot.o: src/kernel/boot.s
 	@echo "\033[34m[Assembling]\033[0m boot.o"
-	@$(AS) src/kernel/boot.s -o build/boot.o
+	@$(AS) $(ASFLAGS) src/kernel/boot.s -o build/boot.o
 
 # FIXME - Renaming
 build/interrupts.o: src/Kernel/interrupts/*.s
