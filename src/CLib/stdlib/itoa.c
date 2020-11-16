@@ -1,7 +1,7 @@
 #include "stdlib.h"
 
 // inline function to swap two numbers
-inline void swap(char *x, char *y)
+void swap(char *x, char *y)
 {
     char t = *x;
     *x = *y;

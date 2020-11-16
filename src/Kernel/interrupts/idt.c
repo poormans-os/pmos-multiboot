@@ -18,11 +18,10 @@ extern _keyboardState keyboardState; //The keyboard state, defined at "irq.c"
 void idt_init(void)
 {
     extern int load_idt();
-    extern int irq0();
-    extern int irq1();
 
     unsigned long irq0_address;
     unsigned long irq1_address;
+
     unsigned long idt_address;
     unsigned long idt_ptr[2];
 

@@ -1,6 +1,15 @@
 #include "stdio.h"
 #include "io.h"
 
+typedef struct 
+{
+    unsigned short int ip;
+    unsigned short int cs;
+    unsigned short int flags;
+    unsigned short int sp;
+    unsigned short int ss;
+} interrupt_frame;
+
 typedef struct
 {
     unsigned char scrollLock : 1;
@@ -11,7 +20,6 @@ typedef struct
     unsigned char lastData      ;
 } _keyboardState;
 static _keyboardState keyboardState;
-
 
 static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*0-7*/      0 /*null*/      , 0 /*esc*/        , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , 
@@ -83,12 +91,12 @@ static const unsigned char scanset2[0xFF] = {
     /*248-255*/ 0 /*null*/    , 0, 0, 0, 0, 0, 0,   /*null*/
 };
 
-void irq0_handler()
+__attribute__((interrupt)) void irq0(interrupt_frame *frame)
 {
     outb(0x20, 0x20);
 }
 
-void irq1_handler()
+__attribute__((interrupt)) void irq1(interrupt_frame *_)
 {
     unsigned int code = inb(0x60);
     
