@@ -96,7 +96,7 @@ _start:
 		jmp 0x08:flush2	; 0x08 is the offset to our code segment: Far jump!
 	flush2:
 		ret		; Returns back to the C code!
-		
+
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes
