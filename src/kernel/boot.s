@@ -81,43 +81,22 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
-	jmp load_gdt
- 
-	/*global descriptor table*/
-	gdt:
-	
-	gdt_null:
-		.quad 0
-	
-	gdt_code:
-		.word 0xFFFF
-		.word 0
+
+	.global _gdt_flush	; Allows the C code to link to this
+	extern _gp		; Says that '_gp' is in another file
+
+	_gdt_flush:
+		lgdt [_gp]	; Load the GDT with our '_gp' which is a special pointer
+		mov ax, 0x10	; 0x10 is the offset in the GDT to our data segment
+		mov ds, ax
+		mov es, ax
+		mov fs, ax
+		mov gs, ax
+		mov ss, ax
+		jmp 0x08:flush2	; 0x08 is the offset to our code segment: Far jump!
+	flush2:
+		ret		; Returns back to the C code!
 		
-		.byte 0
-		.byte 0x9a /*10011010b*/
-		.byte 0xCF /*11001111b*/
-		.byte 0
-	
-	gdt_data:
-		.word 0xFFFF
-		.word 0
-		
-		.byte 0
-		.byte 0x92 /*10010010b*/
-		.byte 0xCF /*11001111b*/
-		.byte 0
-	
-	gdt_end:
-	
-	gdt_desc:
-		.word gdt_end - gdt - 1
-		.int gdt /*FIXME - Should be a Double Word*/
-	
-	/*;load gdt*/
-	load_gdt:
-		cli  /*;disable interrupts*/
-		lgdt [gdt_desc]  /*;load GDT*/
-		sti  /*;enable interrupts*/
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes

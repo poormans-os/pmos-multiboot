@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "tty.h"
 #include "idt.h"
+#include "gdt.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -17,6 +18,7 @@ void kernel_main(void)
 {
 	/* Initialize terminal interface */
 	terminal_initialize();
+	gdt_install();
 	idt_init();
 
 	printf("%s\n", "Hello, From P-MOS!");
