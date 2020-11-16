@@ -1,26 +1,37 @@
 #include "stdio.h"
-
+/*
+The function prints a simple string and returns if the string was printed properly
+const char* data - string to print
+size_t length - length of string
+*/
 static bool print(const char *data, size_t length)
 {
-    const unsigned char *bytes = (const unsigned char *)data;
-    for (size_t i = 0; i < length; i++)
-        if (putchar(bytes[i]) == EOF)
-            return false;
+    const unsigned char *bytes = (const unsigned char *)data; //assign string into bytes array of Ascii values
+    for (size_t i = 0; i < length; i++)                       //print each byte with putchar function
+        putchar(bytes[i]);
+    //     if (putchar(bytes[i]) == EOF)
+    //         return false;
     return true;
 }
 
+/*
+The function will print a string with option to other values(integer, float, char, string). 
+returns how many bytes where written.
+const char* restrict format - string to print
+... - option to enter several parameters such as integer (%d), float (%f), char (%c), string (%s).
+*/
 int printf(const char *restrict format, ...)
 {
-    va_list parameters;
+    va_list parameters; //list of parameters
     va_start(parameters, format);
 
-    int written = 0;
+    int written = 0; //initialize 0 written bytes
 
     while (*format != '\0')
     {
         size_t maxrem = INT_MAX - written;
 
-        if (format[0] != '%' || format[1] == '%')
+        if (format[0] != '%' || format[1] == '%') //check for entered parameters with %d
         {
             if (format[0] == '%')
                 format++;
@@ -51,6 +62,22 @@ int printf(const char *restrict format, ...)
                 return -1;
             }
             if (!print(&c, sizeof(c)))
+                return -1;
+            written++;
+        }
+        else if (*format == 'd')
+        {
+            //FIXME - implement in a better way
+            format++;
+            int d = (char)va_arg(parameters, int /* char promotes to int */);
+            char tmp[32] = {0};
+            if (!maxrem)
+            {
+                // TODO: Set errno to EOVERFLOW.
+                return -1;
+            }
+            itoa(d, tmp, 10);
+            if (!print(tmp, strlen(tmp)))
                 return -1;
             written++;
         }

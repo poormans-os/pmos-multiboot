@@ -1,8 +1,9 @@
+//our implementation of stdio lybrary
 #pragma once
 
-#include "../vga.h"
-#include "../string/string.h"
-#include "../tty/tty.h"
+#include "string.h"
+#include "tty.h"
+#include "stdlib.h"
 
 #include <limits.h>
 #include <stddef.h>
@@ -13,5 +14,5 @@
 #define EOF (-1)
 
 int printf(const char *__restrict, ...);
-int putchar(int);
+int putchar(char);
 int puts(const char *);

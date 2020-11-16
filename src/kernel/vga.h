@@ -23,11 +23,13 @@ enum vga_color
     VGA_COLOR_WHITE = 15,
 };
 
+//Return the 8bit representation of the colors, the first argument is the foreground color, the second is the backround
 static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
     return fg | bg << 4;
 }
 
+//returns the 16bit representation of a char with the currect color
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 {
     return (uint16_t)uc | (uint16_t)color << 8;
