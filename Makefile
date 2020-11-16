@@ -12,7 +12,7 @@ AS  		= as
 CFLAGS		= $(ARCH_FLAGS) -m32 -W -Wall -O0 -std=c18 -fomit-frame-pointer -nodefaultlibs -nostdlib -finline-functions -fno-builtin -Isrc/include/
 ASFLAGS		= --32
 LDFLAGS		= -m elf_$(ARCH)
-OBJS 		+= stdio stdlib string tty kernel idt math io #Compiler objects
+OBJS 		+= stdio stdlib string tty kernel idt math io gdt#Compiler objects
 OBJS	 	+= boot interrupts #Assembler objects
 OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
 TARGET		= bin/pmos.bin
@@ -34,6 +34,10 @@ build/:
 build/kernel.o: src/Kernel/kernel.c
 	@echo "\033[36m[Compiling]\033[0m kernel.o"
 	@$(CC) -c src/kernel/kernel.c -o build/kernel.o $(CFLAGS)
+
+build/gdt.o: src/Kernel/gdt.c
+	@echo "\033[36m[Compiling]\033[0m gdt.o"
+	@$(CC) -c src/kernel/gdt.c -o build/gdt.o $(CFLAGS)
 
 build/boot.o: src/kernel/boot.s
 	@echo "\033[34m[Assembling]\033[0m boot.o"

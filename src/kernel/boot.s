@@ -49,6 +49,22 @@ doesn't make sense to return from this function as the bootloader is gone.
 .section .text
 .global _start
 .global kernel_main
+
+.global _gdt_flush	/* Allows the C code to link to this*/
+.extern _gp		/*Says that '_gp' is in another file*/
+
+_gdt_flush:
+	lgdt [_gp]	/*Load the GDT with our '_gp' which is a special pointer*/
+	mov ax, 0x10	/*0x10 is the offset in the GDT to our data segment*/
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	jmp 0x08:flush2	/* 0x08 is the offset to our code segment: Far jump!*/
+flush2:
+	ret		/*Returns back to the C code!*/
+
 .type _start, @function
 _start:
 	/*
@@ -82,21 +98,6 @@ _start:
 	runtime support to work as well.
 	*/
 
-	.global _gdt_flush	; Allows the C code to link to this
-	extern _gp		; Says that '_gp' is in another file
-
-	_gdt_flush:
-		lgdt [_gp]	; Load the GDT with our '_gp' which is a special pointer
-		mov ax, 0x10	; 0x10 is the offset in the GDT to our data segment
-		mov ds, ax
-		mov es, ax
-		mov fs, ax
-		mov gs, ax
-		mov ss, ax
-		jmp 0x08:flush2	; 0x08 is the offset to our code segment: Far jump!
-	flush2:
-		ret		; Returns back to the C code!
-
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes
@@ -106,7 +107,6 @@ _start:
 	preserved and the call is well defined.
 	*/
 	call kernel_main
- 
 	/*
 	If the system has nothing more to do, put the computer into an
 	infinite loop. To do that:
