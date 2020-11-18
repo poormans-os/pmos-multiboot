@@ -1,11 +1,13 @@
+.intel_syntax noprefix
 .section .text
+
 .global loadPageDirectory
 .global enablePaging
 
 loadPageDirectory:
     push ebp
     mov ebp, esp
-    mov eax, 8(esp)
+    mov eax, 8[esp]
     mov cr3, eax
     mov esp, ebp
     pop ebp
