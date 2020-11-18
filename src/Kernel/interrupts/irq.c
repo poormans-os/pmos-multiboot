@@ -23,7 +23,7 @@ static _keyboardState keyboardState;
 
 static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*0-7*/      0 /*null*/      , 0 /*esc*/        , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              , 
-                                /*8-15*/    '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  0 /*backspace*/ ,  0 /*tab*/       ,
+                                /*8-15*/    '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  8 /*backspace*/ ,  0 /*tab*/       ,
                                 /*16-23*/   'Q'              , 'W'              , 'E'              , 'R'              , 'T'              , 'Y'              , 'U'              , 'I'              , 
                                 /*24-31*/   'O'              , 'P'              , '['              , ']'              , '\n' /*enter*/   ,  0 /*L ctrl*/    , 'A'              , 'S'              ,   
                                 /*32-39*/   'D'              , 'F'              , 'G'              , 'H'              , 'J'              , 'K'              , 'L'              , ';'              , 
@@ -39,7 +39,7 @@ static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*112-119*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
                                 /*120-127*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
                                 /*128-135*/  0 /*null*/      ,  0 /*esc*/       , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              ,    
-                                /*136-143*/ '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  0 /*backspace*/ ,  0 /*tab*/       ,
+                                /*136-143*/ '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  8 /*backspace*/ ,  0 /*tab*/       ,
                                 /*144-151*/ 'Q'              , 'W'              , 'E'              , 'R'              , 'T'              , 'Y'              , 'U'              , 'I'              ,
                                 /*152-159*/ 'O'              , 'P'              , '['              , ']'              , '\n' /*enter*/     , 0 /*L ctrl*/     , 'A'              , 'S'              ,
                                 /*160-167*/ 'D'              , 'F'              , 'G'              , 'H'              , 'J'              , 'K'              , 'L'              , ';'              ,

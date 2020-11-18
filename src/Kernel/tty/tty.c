@@ -69,6 +69,14 @@ void terminal_putchar(char c)
         update_cursor(terminal_column, terminal_row);
         return;
     }
+    else if (uc == 0x8)
+    {
+        if (--terminal_column == VGA_HEIGHT) //Check for terminal_row out of bounds
+            terminal_column = VGA_HEIGHT - 1;
+        terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+        update_cursor(terminal_column, terminal_row);
+        return;
+    }
 
     terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH)
