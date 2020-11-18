@@ -3,6 +3,7 @@
 #include "tty.h"
 #include "idt.h"
 #include "gdt.h"
+#include "paging.h"
 
 // /* Check if the compiler thinks you are targeting the wrong operating system. */
 // #if defined(__linux__)
@@ -20,6 +21,10 @@ void kernel_main(void)
 	terminal_initialize();
 	gdt_install();
 	idt_init();
+
+	pageDirectory_init();
+	loadPageDirectory(pageDirectory);
+	enablePaging();
 
 	printf("%s\n", "Hello, From P-MOS!");
 	while (1)
