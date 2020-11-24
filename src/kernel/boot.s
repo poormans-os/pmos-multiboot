@@ -50,6 +50,8 @@ doesn't make sense to return from this function as the bootloader is gone.
 .global _start
 .global kernel_main
 
+.extern _bootInfo
+
 .global _gdt_flush	/* Allows the C code to link to this*/
 .extern _gp		/*Says that '_gp' is in another file*/
 
@@ -86,7 +88,8 @@ _start:
 	in assembly as languages such as C cannot function without a stack.
 	*/
 	mov stack_top, esp
- 
+	
+	mov _bootInfo, ebx
 	/*
 	This is a good place to initialize crucial processor state before the
 	high-level kernel is entered. It's best to minimize the early
