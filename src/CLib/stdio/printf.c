@@ -76,7 +76,23 @@ int printf(const char *restrict format, ...)
                 // TODO: Set errno to EOVERFLOW.
                 return -1;
             }
-            itoa(d, tmp, 10);
+            itoa(d, tmp, 10, false);
+            if (!print(tmp, strlen(tmp)))
+                return -1;
+            written++;
+        }
+        else if (*format == 'u')
+        {
+            //FIXME - implement in a better way
+            format++;
+            int d = (char)va_arg(parameters, unsigned int /* char promotes to uint */);
+            char tmp[32] = {0};
+            if (!maxrem)
+            {
+                // TODO: Set errno to EOVERFLOW.
+                return -1;
+            }
+            itoa(d, tmp, 10, true);
             if (!print(tmp, strlen(tmp)))
                 return -1;
             written++;
