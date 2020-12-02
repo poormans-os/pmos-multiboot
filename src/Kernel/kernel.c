@@ -13,7 +13,7 @@
 
 #define CHECK_FLAG(flags, bit) ((flags) & (1 << (bit)))
 
-void kernel_main(unsigned int magic, struct multiboot_info *mbi)
+void kernel_main(const unsigned int magic, const struct multiboot_info *mbi)
 {
 	// Initialize terminal interface
 	terminal_initialize();
@@ -36,7 +36,6 @@ void kernel_main(unsigned int magic, struct multiboot_info *mbi)
 		printf("Magic ok\n");
 	}
 	printf("%x\n", magic);
-	printf("%d\n", _baypassStack);
 
 	//multiboot_info_t *mbi = (multiboot_info_t *)mbiAddr;
 	printf("flags = 0x%x\n", (unsigned)mbi->flags);
@@ -48,8 +47,8 @@ void kernel_main(unsigned int magic, struct multiboot_info *mbi)
 		printf("boot_device = 0x%x\n", (unsigned)mbi->boot_device);
 
 	/* Is the command line passed? */
-	if (CHECK_FLAG(mbi->flags, 2))
-		printf("cmdline = %s\n", (char *)mbi->cmdline);
+	if (CHECK_FLAG(mbi->flags, 9))
+		printf("boot_loader_name = %s\n", (char *)mbi->boot_loader_name);
 
 	// /* Are mods_* valid? */
 	// if (CHECK_FLAG(mbi->flags, 3))
@@ -98,25 +97,25 @@ void kernel_main(unsigned int magic, struct multiboot_info *mbi)
 	// 		   (unsigned)multiboot_elf_sec->addr, (unsigned)multiboot_elf_sec->shndx);
 	// }
 
-	// /* Are mmap_* valid? */
-	// if (CHECK_FLAG(mbi->flags, 6))
-	// {
-	// 	multiboot_memory_map_t *mmap;
+	/* Are mmap_* valid? */
+	if (CHECK_FLAG(mbi->flags, 6))
+	{
+		struct multiboot_mmap_entry *mmap;
 
-	// 	printf("mmap_addr = 0x%x, mmap_length = 0x%x\n",
-	// 		   (unsigned)mbi->mmap_addr, (unsigned)mbi->mmap_length);
-	// 	for (mmap = (multiboot_memory_map_t *)mbi->mmap_addr;
-	// 		 (unsigned long)mmap < mbi->mmap_addr + mbi->mmap_length;
-	// 		 mmap = (multiboot_memory_map_t *)((unsigned long)mmap + mmap->size + sizeof(mmap->size)))
-	// 		printf(" size = 0x%x, base_addr = 0x%x%x,"
-	// 			   " length = 0x%x%x, type = 0x%x\n",
-	// 			   (unsigned)mmap->size,
-	// 			   (unsigned)(mmap->addr >> 32),
-	// 			   (unsigned)(mmap->addr & 0xffffffff),
-	// 			   (unsigned)(mmap->len >> 32),
-	// 			   (unsigned)(mmap->len & 0xffffffff),
-	// 			   (unsigned)mmap->type);
-	// }
+		printf("mmap_addr = 0x%x, mmap_length = 0x%x\n",
+			   (unsigned)mbi->mmap_addr, (unsigned)mbi->mmap_length);
+		for (mmap = (struct multiboot_mmap_entry *)mbi->mmap_addr;
+			 (unsigned long)mmap < mbi->mmap_addr + mbi->mmap_length;
+			 mmap = (struct multiboot_mmap_entry *)((unsigned long)mmap + mmap->size + sizeof(mmap->size)))
+			printf(" size = 0x%x, base_addr = 0x%x%x,"
+				   " length = 0x%x%x, type = 0x%x\n",
+				   (unsigned)mmap->size,
+				   (unsigned)(mmap->addr >> 32),
+				   (unsigned)(mmap->addr & 0xffffffff),
+				   (unsigned)(mmap->len >> 32),
+				   (unsigned)(mmap->len & 0xffffffff),
+				   (unsigned)mmap->type);
+	}
 	// *(int *)(heap_top) = 4;
 
 	// printf("Running: %s on %s, Hello From P-MOS!\n", mbd->cmdline, mbd->boot_loader_name);

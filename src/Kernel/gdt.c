@@ -30,7 +30,7 @@ struct gdt_ptr _gp;
 extern void _gdt_flush();
 
 /* Setup a descriptor in the Global Descriptor Table */
-void gdt_set_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char gran)
+void gdt_set_gate(const int num, const unsigned long base, const unsigned long limit, const unsigned char access, const unsigned char gran)
 {
 	/* Setup the descriptor base access */
 	gdt[num].base_low = (base & 0xFFFF);

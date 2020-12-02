@@ -1,7 +1,7 @@
 #include "stdio.h"
 
 //Warper function, calls terminal_putchat
-int putchar(char ic)
+int putchar(const unsigned char ic)
 {
     if (!ic)
         return 0;

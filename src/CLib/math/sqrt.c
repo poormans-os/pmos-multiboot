@@ -3,7 +3,7 @@
 The function calculates square root of a number and returns it
 float n - number to calculate its square root
 */
-float sqrt(float n)
+float sqrt(const float n)
 {
     if (n < 0)
         return -1;

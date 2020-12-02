@@ -1,4 +1,4 @@
-//our implementation of stdlib lybrary
+//our implementation of stdlib library
 #pragma once
 
 #include <stdbool.h>

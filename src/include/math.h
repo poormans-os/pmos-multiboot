@@ -1,7 +1,7 @@
 //Our implementation of the C library math.h
 #pragma once
 
-float fabs(float);
-float pow(float, float);
-float sqrt(float);
-float floor(float);
+float fabs(const float);
+float pow(const float, const float);
+float sqrt(const float);
+float floor(const float);

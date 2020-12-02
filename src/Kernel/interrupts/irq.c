@@ -30,10 +30,10 @@ static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*40-47*/   '\''             , '`'              ,  0 /*L shift*/   , '\\'             , 'Z'              , 'X'              , 'C'              , 'V'              , 
                                 /*48-55*/   'B'              , 'N'              , 'M'              , ','              , '.'              , '/'              ,  0 /*R shift*/   ,  0 /*keypad:* */ ,  
                                 /*56-63*/    0 /*L alt*/     , ' ' /*space*/    ,  0 /*capslock*/  ,  0 /*F1*/        ,  0 /*F2*/        ,  0 /*F3*/        ,  0 /*F4*/        ,  0 /*F5*/        ,  
-                                /*64-71*/    0 /*F6*/        , 0 /*F7*/         ,  0 /*F8*/        ,  0 /*F9*/        ,  0 /*F10*/       ,  0 /*numLock*/   ,  0 /*scrollLock*/,  0 /*keypad:7 */ ,  
-                                /*72-79*/    0 /*keypad:8 */ , 0 /*keypad:9 */  ,  0 /*keypad:- */ ,  0 /*keypad:4 */ ,  0 /*keypad:5 */ ,  0 /*keypad:6 */ ,  0 /*keypad:+ */ ,  0 /*keypad:1 */ ,  
-                                /*80-87*/    0 /*keypad:2 */ , 0 /*keypad:3 */  ,  0 /*keypad:0 */ ,  0 /*keypad:. */ ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*F11*/       ,  
-                                /*88-95*/    0 /*F12*/       , 0 /*null*/       ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,    
+                                /*64-71*/    0 /*F6*/        ,  0 /*F7*/        ,  0 /*F8*/        ,  0 /*F9*/        ,  0 /*F10*/       ,  0 /*numLock*/   ,  0 /*scrollLock*/,  0 /*keypad:7 */ ,  
+                                /*72-79*/    0 /*keypad:8 */ ,  0 /*keypad:9 */ ,  0 /*keypad:- */ ,  0 /*keypad:4 */ ,  0 /*keypad:5 */ ,  0 /*keypad:6 */ ,  0 /*keypad:+ */ ,  0 /*keypad:1 */ ,  
+                                /*80-87*/    0 /*keypad:2 */ ,  0 /*keypad:3 */ ,  0 /*keypad:0 */ ,  0 /*keypad:. */ ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*F11*/       ,  
+                                /*88-95*/    0 /*F12*/       ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,    
                                 /*96-103*/   0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      , 
                                 /*104-111*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
                                 /*112-119*/  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,  0 /*null*/      ,
@@ -41,7 +41,7 @@ static const unsigned char scanset1[0xFF] = {        /*pressed*/
                                 /*128-135*/  0 /*null*/      ,  0 /*esc*/       , '1'              , '2'              , '3'              , '4'              , '5'              , '6'              ,    
                                 /*136-143*/ '7'              , '8'              , '9'              , '0'              , '-'              , '='              ,  8 /*backspace*/ ,  0 /*tab*/       ,
                                 /*144-151*/ 'Q'              , 'W'              , 'E'              , 'R'              , 'T'              , 'Y'              , 'U'              , 'I'              ,
-                                /*152-159*/ 'O'              , 'P'              , '['              , ']'              , '\n' /*enter*/     , 0 /*L ctrl*/     , 'A'              , 'S'              ,
+                                /*152-159*/ 'O'              , 'P'              , '['              , ']'              , '\n' /*enter*/   ,  0 /*L ctrl*/    , 'A'              , 'S'              ,
                                 /*160-167*/ 'D'              , 'F'              , 'G'              , 'H'              , 'J'              , 'K'              , 'L'              , ';'              ,
                                 /*168-175*/ '\''             , '`'              ,  0 /*L shift*/   , '\\'             , 'Z'              , 'X'              , 'C'              , 'V'              ,
                                 /*176-183*/ 'B'              , 'N'              , 'M'              , ','              , '.'              , '/'              ,  0 /*R shift*/   ,  0 /*keypad:* */ ,
@@ -91,12 +91,12 @@ static const unsigned char scanset2[0xFF] = {
     /*248-255*/ 0 /*null*/    , 0, 0, 0, 0, 0, 0,   /*null*/
 };
 
-__attribute__((interrupt)) void irq0(interrupt_frame *frame)
+__attribute__((interrupt)) void irq0(const interrupt_frame *frame)
 {
     outb(0x20, 0x20);
 }
 
-__attribute__((interrupt)) void irq1(interrupt_frame *_)
+__attribute__((interrupt)) void irq1(const interrupt_frame *_)
 {
     unsigned int code = inb(0x60);
     

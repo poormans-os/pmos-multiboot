@@ -4,7 +4,7 @@ The function will calculate and return the value x by power y
 float x - value to do power on
 float y - power
 */
-float fpow(float x, float y)
+float fpow(const float x, const float y)
 {
     float sum = 1, i = 0;
     if (y != 0) //if power is 0 return 1

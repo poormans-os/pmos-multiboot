@@ -4,7 +4,7 @@ The function prints a simple string and returns if the string was printed proper
 const char* data - string to print
 size_t length - length of string
 */
-static bool print(const char *data, size_t length)
+static bool print(const char *data, const size_t length)
 {
     const unsigned char *bytes = (const unsigned char *)data; //assign string into bytes array of Ascii values
     for (size_t i = 0; i < length; i++)                       //print each byte with putchar function
@@ -14,7 +14,7 @@ static bool print(const char *data, size_t length)
     return true;
 }
 
-char *convert(unsigned int num, int base)
+char *convert(unsigned int num, const int base)
 {
     static char Representation[] = "0123456789ABCDEF";
     static char buffer[50];

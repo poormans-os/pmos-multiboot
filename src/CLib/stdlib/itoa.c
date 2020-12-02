@@ -1,7 +1,7 @@
 #include "stdlib.h"
 
 // Iterative function to implement itoa() function in C
-char *itoa(int value, char *str, int base, bool uint)
+char *itoa(int value, char *str, const int base, const bool uint)
 {
     char *rc;
     char *ptr;

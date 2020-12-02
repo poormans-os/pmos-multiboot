@@ -13,6 +13,6 @@
 
 #define EOF (-1)
 
-int printf(const char *__restrict, ...);
-int putchar(char);
+int printf(const char *, ...);
+int putchar(const unsigned char);
 int puts(const char *);
