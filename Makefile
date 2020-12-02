@@ -1,4 +1,4 @@
-.PHONY: all clean run
+.PHONY: all clean run iso
 
 buildObj 	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/Kernel/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
 buildLibObj	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/CLib/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
@@ -85,3 +85,11 @@ clean:
 run: $(TARGET)
 	@echo "\033[36m[Runing on qemu]\033[0m"
 	@qemu-system-i386 -kernel $(TARGET)
+
+iso: $(TARGET)
+	@echo "\033[36m[Runing on qemu ISO]\033[0m"
+	@mkdir -p bin/iso/boot/grub
+	@cp src/Kernel/static/grub.cfg bin/iso/boot/grub/grub.cfg
+	@cp bin/pmos.bin bin/iso/boot/pmos.bin
+	@grub-mkrescue -o bin/pmos.iso bin/iso
+	@qemu-system-i386 -cdrom bin/pmos.iso

@@ -22,7 +22,11 @@ forced to be within the first 8 KiB of the kernel file.
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
- 
+.long   0
+.long   0
+.long   0
+.long   0
+.long   0  
 /*
 The multiboot standard does not define the value of the stack pointer register
 (esp) and it is up to the kernel to provide a stack. This allocates room for a
@@ -49,8 +53,6 @@ doesn't make sense to return from this function as the bootloader is gone.
 .section .text
 .global _start
 .global kernel_main
-
-.extern _bootInfo
 
 .global _gdt_flush	/* Allows the C code to link to this*/
 .extern _gp		/*Says that '_gp' is in another file*/
@@ -81,15 +83,13 @@ _start:
 	itself. It has absolute and complete power over the
 	machine.
 	*/
- 
+	
 	/*
 	To set up a stack, we set the esp register to point to the top of the
 	stack (as it grows downwards on x86 systems). This is necessarily done
 	in assembly as languages such as C cannot function without a stack.
 	*/
 	mov stack_top, esp
-	
-	mov _bootInfo, ebx
 	/*
 	This is a good place to initialize crucial processor state before the
 	high-level kernel is entered. It's best to minimize the early
@@ -109,6 +109,9 @@ _start:
 	stack since (pushed 0 bytes so far), so the alignment has thus been
 	preserved and the call is well defined.
 	*/
+	push ebx
+	push eax
+
 	call kernel_main
 	/*
 	If the system has nothing more to do, put the computer into an
