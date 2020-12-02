@@ -14,6 +14,24 @@ static bool print(const char *data, size_t length)
     return true;
 }
 
+char *convert(unsigned int num, int base)
+{
+    static char Representation[] = "0123456789ABCDEF";
+    static char buffer[50];
+    char *ptr;
+
+    ptr = &buffer[49];
+    *ptr = '\0';
+
+    do
+    {
+        *--ptr = Representation[num % base];
+        num /= base;
+    } while (num != 0);
+
+    return (ptr);
+}
+
 /*
 The function will print a string with option to other values(integer, float, char, string). 
 returns how many bytes where written.
@@ -62,6 +80,22 @@ int printf(const char *restrict format, ...)
                 return -1;
             }
             if (!print(&c, sizeof(c)))
+                return -1;
+            written++;
+        }
+        else if (*format == 'x')
+        {
+            //FIXME - implement in a better way
+            format++;
+            int d = (char)va_arg(parameters, int /* char promotes to int */);
+            char *tmp = {0};
+            if (!maxrem)
+            {
+                // TODO: Set errno to EOVERFLOW.
+                return -1;
+            }
+            tmp = convert(d, 16);
+            if (!print(tmp, strlen(tmp)))
                 return -1;
             written++;
         }
