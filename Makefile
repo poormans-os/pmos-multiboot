@@ -2,34 +2,62 @@
 
 buildObj 	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/Kernel/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
 buildLibObj	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/CLib/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
-asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) $(ASFLAGS) $(ARCH_FLAGS) -o build/$(1).o src/kernel/$(1)/$(1).s
+asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) $(ASFLAGS) -o build/$(1).o src/kernel/$(1)/$(1).asm
 
 ARCH=i386
 ARCH_FLAGS=-march=$(ARCH)
 
 CC  		= clang-9
-AS  		= as
-CFLAGS		= $(ARCH_FLAGS) -m32 -W -Wall -O0 -std=c18 -fomit-frame-pointer -nodefaultlibs -nostdlib -finline-functions -fno-builtin -Isrc/include/
-ASFLAGS		= --32
-LDFLAGS		= -m elf_$(ARCH)
+AS  		= nasm
+#CFLAGS		= $(ARCH_FLAGS) -m32 -W -Wall -O0 -std=c18 -fomit-frame-pointer -nodefaultlibs -nostdlib -finline-functions -fno-builtin -Isrc/include/
+#ASFLAGS		= --32
+ASFLAGS		= -felf64
+CFLAGS := \
+    -target amd64-unknown-elf \
+    -mcmodel=kernel \
+    -masm=intel \
+    -Wall \
+    -Werror \
+    -ffreestanding \
+    -nostdlib \
+    -mno-red-zone \
+    -fshort-wchar \
+    -static \
+    -O3 \
+    -flto \
+    -g \
+	-Isrc/include
+
+LDFLAGS := \
+    --oformat elf_amd64 \
+    --Bstatic \
+    --nostdlib \
+	-T src/Kernel/static/amd64.ld
+
+#LDFLAGS		= -m elf_$(ARCH)
 OBJS 		+= stdio stdlib string tty kernel idt math io gdt paging#Compiler objects
-OBJS	 	+= boot interrupts mmu #Assembler objects
+OBJS	 	+= interrupts #Assembler objects
 OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
 TARGET		= bin/pmos.bin
+BOOTLAODER  = bin/efi/boot/BOOTX64.EFI
 
 all: $(TARGET)
 
 remake: clean $(TARGET)
 
-$(TARGET): build/ bin/ $(OBJFILES)
+$(TARGET): build/ bin/ $(BOOTLAODER) $(OBJFILES)
 	@echo "\033[32m[Linking]\033[0m The Project"
-	@ld $(LDFLAGS) -T src/Kernel/static/linker.ld $(OBJFILES) -o $(TARGET)
+	@ld.lld-9 $(LDFLAGS) $(OBJFILES) -o $(TARGET)
 
 bin/:
 	@mkdir -p bin
 
 build/:
 	@mkdir -p build
+
+$(BOOTLAODER): $(shell find bootloader/src/ -name '*.c')
+	@cd bootloader && make
+	@cp bootloader/externals/zap-light16.psf bin/zap-light16.psf
 
 build/kernel.o: src/Kernel/kernel.c
 	@echo "\033[36m[Compiling]\033[0m kernel.o"
@@ -44,7 +72,7 @@ build/boot.o: src/kernel/boot.s
 	@$(AS) $(ASFLAGS) src/kernel/boot.s -o build/boot.o
 
 # FIXME - Renaming
-build/interrupts.o: src/Kernel/interrupts/*.s
+build/interrupts.o: src/Kernel/interrupts/*.asm
 	$(call asmObj,interrupts)
 
 # FIXME - Renaming
@@ -79,17 +107,11 @@ build/string.o: src/CLib/string/*.c
 
 clean:
 	@echo "\033[33m[Cleaning up!]\033[0m"
+	@cd bootloader && make clean
 	@rm -rf build
 	@rm -rf bin
 
 run: $(TARGET)
 	@echo "\033[36m[Runing on qemu]\033[0m"
-	@qemu-system-i386 -kernel $(TARGET)
-
-iso: $(TARGET)
-	@echo "\033[36m[Runing on qemu ISO]\033[0m"
-	@mkdir -p bin/iso/boot/grub
-	@cp src/Kernel/static/grub.cfg bin/iso/boot/grub/grub.cfg
-	@cp bin/pmos.bin bin/iso/boot/pmos.bin
-	@grub-mkrescue -o bin/pmos.iso bin/iso
-	@qemu-system-i386 -cdrom bin/pmos.iso
+	@#@qemu-system-i386 -kernel $(TARGET)
+	@qemu-system-x86_64.exe -L externals -bios bootloader/externals/OVMF.fd -hdd fat:rw:bin

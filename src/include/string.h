@@ -1,5 +1,6 @@
 #pragma once
 
+//typedef long unsigned int size_t;
 #include <stdint.h>
 #include <stddef.h>
 

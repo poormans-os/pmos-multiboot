@@ -1,8 +1,9 @@
+[bits 64]
 .intel_syntax noprefix
 .section .text
 
-.global loadPageDirectory
-.global enablePaging
+global loadPageDirectory
+global enablePaging
 
 loadPageDirectory:
     push ebp

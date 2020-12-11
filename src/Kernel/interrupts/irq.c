@@ -18,7 +18,7 @@ typedef struct
     unsigned char scanSet    : 2;
     unsigned char lastCmd       ;
     unsigned char lastData      ;
-} _keyboardState;
+}  __attribute__((packed)) _keyboardState;
 static _keyboardState keyboardState;
 
 static const unsigned char scanset1[0xFF] = {        /*pressed*/
@@ -99,7 +99,7 @@ __attribute__((interrupt)) void irq0(const interrupt_frame *frame)
 __attribute__((interrupt)) void irq1(const interrupt_frame *_)
 {
     unsigned int code = inb(0x60);
-    
+
     if (code == 0xFA) // OK
     {
         keyboardState.lastCmd = 0;
@@ -109,7 +109,7 @@ __attribute__((interrupt)) void irq1(const interrupt_frame *_)
         outb(0x60, keyboardState.lastData);
     else if (code == 0xBA) // CapsLock Pressed
         keyboardState.capsLock = !keyboardState.capsLock;
-    else if (code > 0x80)
+    else if (code & 0x80)
     {
         code = scanset1[code];
         if (keyboardState.capsLock == 0 && (code >= 0x41 && code <= 0x5A))
@@ -117,6 +117,6 @@ __attribute__((interrupt)) void irq1(const interrupt_frame *_)
         else
             putchar(code);
     }
-    
+
     outb(0x20, 0x20);
 }
