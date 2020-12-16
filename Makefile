@@ -1,23 +1,19 @@
-.PHONY: all clean run iso
+.PHONY: all clean run bootloader
 
 buildObj 	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/Kernel/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
 buildLibObj	= @echo "\033[36m[Compiling]\033[0m $(if $(strip $(2)),$(2),$(1)).o" && $(CC) -c src/CLib/$(1)/$(1).c -o build/$(if $(strip $(2)),$(2),$(1)).o $(CFLAGS)
 asmObj 		= @echo "\033[34m[Assembling]\033[0m $(1).o" && $(AS) $(ASFLAGS) -o build/$(1).o src/kernel/$(1)/$(1).asm
 
-ARCH=i386
-ARCH_FLAGS=-march=$(ARCH)
-
 CC  		= clang-9
 AS  		= nasm
-#CFLAGS		= $(ARCH_FLAGS) -m32 -W -Wall -O0 -std=c18 -fomit-frame-pointer -nodefaultlibs -nostdlib -finline-functions -fno-builtin -Isrc/include/
-#ASFLAGS		= --32
 ASFLAGS		= -felf64
+
 CFLAGS := \
     -target amd64-unknown-elf \
     -mcmodel=kernel \
     -masm=intel \
     -Wall \
-    -Werror \
+	-std=c11 \
     -ffreestanding \
     -nostdlib \
     -mno-red-zone \
@@ -26,7 +22,7 @@ CFLAGS := \
     -O3 \
     -flto \
     -g \
-	-Isrc/include
+	-I src/include
 
 LDFLAGS := \
     --oformat elf_amd64 \
@@ -34,7 +30,6 @@ LDFLAGS := \
     --nostdlib \
 	-T src/Kernel/static/amd64.ld
 
-#LDFLAGS		= -m elf_$(ARCH)
 OBJS 		+= stdio stdlib string tty kernel idt math io gdt paging#Compiler objects
 OBJS	 	+= interrupts #Assembler objects
 OBJFILES	= $(foreach OBJ,$(OBJS),build/$(OBJ).o)
@@ -56,7 +51,7 @@ build/:
 	@mkdir -p build
 
 $(BOOTLAODER): $(shell find bootloader/src/ -name '*.c')
-	@cd bootloader && make
+	@cd bootloader && make --no-print-directory
 	@cp bootloader/externals/zap-light16.psf bin/zap-light16.psf
 
 build/kernel.o: src/Kernel/kernel.c
@@ -105,13 +100,17 @@ build/stdlib.o: src/CLib/stdlib/*.c
 build/string.o: src/CLib/string/*.c
 	$(call buildLibObj,string)
 
+bootloader:
+	@echo "\033[33m[Cleaning up!]\033[0m"
+	@cd bootloader && make --no-print-directory clean
+	@cd bootloader && make --no-print-directory
+
 clean:
 	@echo "\033[33m[Cleaning up!]\033[0m"
-	@cd bootloader && make clean
+	@cd bootloader && make --no-print-directory clean
 	@rm -rf build
 	@rm -rf bin
 
 run: $(TARGET)
 	@echo "\033[36m[Runing on qemu]\033[0m"
-	@#@qemu-system-i386 -kernel $(TARGET)
 	@qemu-system-x86_64.exe -L externals -bios bootloader/externals/OVMF.fd -hdd fat:rw:bin
